@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  mcp-server:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8000
+      - MCP_DEBUG=False
+      - MCP_SECRET_KEY=${MCP_SECRET_KEY:-default-secret-key-change-me}
+      - MCP_API_KEYS=${MCP_API_KEYS:-key1,key2,key3}
+      - SKYSQL_API_KEY=${SKYSQL_API_KEY:-your-skysql-api-key}
+    restart: unless-stopped 
