@@ -14,22 +14,13 @@ deployment:
   
 # Runtime environment variables 
 env:
-  MCP_HOST: 0.0.0.0
-  MCP_PORT: 8000
+  MCP_HOST: "0.0.0.0"
+  MCP_PORT: "8000"
   MCP_DEBUG: "False"
   # For sensitive values, use secrets
-  MCP_SECRET_KEY:
-    secretRef:
-      name: mcp-secrets
-      key: secret-key
-  MCP_API_KEYS:
-    secretRef:
-      name: mcp-secrets
-      key: api-keys
-  SKYSQL_API_KEY:
-    secretRef:
-      name: mcp-secrets
-      key: skysql-api-key
+  MCP_SECRET_KEY: "${SECRET_KEY}"
+  MCP_API_KEYS: "${API_KEYS}"
+  SKYSQL_API_KEY: "${SKYSQL_API_KEY}"
 
 # Network settings
 network:
