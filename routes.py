@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request, Header
 from typing import Dict, List, Optional, Any
 import logging
 from datetime import datetime
+import httpx  # Add httpx import for SkySQL API calls
 
 # Local imports
 from config import settings

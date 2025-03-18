@@ -32,4 +32,9 @@ class SkySQLAPI:
             return response.json()
 
 # Create a singleton instance
-skysql_client = SkySQLAPI(settings.SKYSQL_API_KEY) 
+skysql_client = SkySQLAPI(settings.SKYSQL_API_KEY)
+
+# Add the function that server.py is trying to import
+async def get_skysql_topologies(service_type: str = "transactional") -> Dict[str, Any]:
+    """Wrapper function to get topologies from SkySQL API"""
+    return await skysql_client.get_topologies(service_type) 

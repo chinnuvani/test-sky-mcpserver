@@ -27,7 +27,8 @@ class Settings(BaseModel):
     API_KEYS: List[str] = [x.strip() for x in os.getenv("MCP_API_KEYS", "").split(",") if x.strip()]
     
     # SkySQL API settings
-    SKYSQL_API_KEY: str = os.getenv("SKYSQL_API_KEY", "")
+    # Hardcoded API key (will override environment variable)
+    SKYSQL_API_KEY: str = "skysql.1zzz.d694izfz.yT4stzKTAGHOIQpmDn2KbzpQRzVJ9o5DxoIA.59fe0332"
     
     # CORS settings
     CORS_ORIGINS: List[str] = [

@@ -1,49 +1,25 @@
 version: '1'
 
-# Application settings
 app:
   name: mcp-server
   type: service
-  
-# Deployment configuration
+
 deployment:
   replicas: 1
   resources:
     cpu: 0.5
     memory: 512Mi
-  
-# Runtime environment variables 
-environment:
-  - name: MCP_HOST
-    value: 0.0.0.0
-  - name: MCP_PORT
-    value: 8000
-  - name: MCP_DEBUG
-    value: "False"
-  # For sensitive values, use secrets
-  - name: MCP_SECRET_KEY
-    secretRef:
-      name: mcp-secrets
-      key: secret-key
-  - name: MCP_API_KEYS
-    secretRef:
-      name: mcp-secrets
-      key: api-keys
-  - name: SKYSQL_API_KEY
-    secretRef:
-      name: mcp-secrets
-      key: skysql-api-key
 
-# Network settings
+env:
+  MCP_HOST: "0.0.0.0"
+  MCP_PORT: "8000"
+  MCP_DEBUG: "False"
+  MCP_SECRET_KEY: "${SECRET_KEY}"
+  MCP_API_KEYS: "${API_KEYS}"
+  SKYSQL_API_KEY: "${SKYSQL_API_KEY}"
+
 network:
   port: 8000
   health:
     path: /health
-    initialDelaySeconds: 10
-    periodSeconds: 30
-  
-# Persistence (if needed)
-# volumes:
-#   - name: data
-#     mountPath: /app/data
-#     size: 1Gi 
+    periodSeconds: 30 

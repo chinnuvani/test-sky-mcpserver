@@ -5,14 +5,15 @@ Main server application entry point
 """
 
 import uvicorn
-from fastapi import FastAPI, Depends, HTTPException, status, Header
+from fastapi import FastAPI, Depends, HTTPException, status, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 from typing import Dict, List, Optional, Any
+import json
 
 # Local imports
 from config import settings
-from routes import router as api_router
+from routes import api_router
 from skysql_api import get_skysql_topologies
 
 # Configure logging
@@ -67,17 +68,49 @@ async def list_tools():
 
 @app.post("/tools/call")
 async def call_tool(
-    tool_name: str,
-    parameters: Dict[str, Any],
-    api_key: str = Header(None)
+    request: Request,
+    api_key: Optional[str] = Header(None)
 ):
     """Call a specific tool with given parameters."""
-    if tool_name == "get_skysql_topologies":
-        try:
-            return await get_skysql_topologies(parameters.get("service_type"))
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-    raise HTTPException(status_code=404, detail=f"Tool {tool_name} not found")
+    try:
+        # Parse request body
+        body = await request.json()
+        tool_name = body.get("tool_name")
+        parameters = body.get("parameters", {})
+        
+        if not tool_name:
+            raise HTTPException(
+                status_code=400, 
+                detail="Missing required parameter 'tool_name' in request body"
+            )
+            
+        if tool_name == "get_skysql_topologies":
+            # Check if we're using a dummy key
+            if settings.SKYSQL_API_KEY == "dummy-key-for-development":
+                # Return mock data for development testing
+                return {
+                    "topologies": [
+                        {
+                            "id": "sample-topology-1",
+                            "name": "Development Sample Topology 1",
+                            "description": "This is a sample topology for development purposes",
+                            "serviceType": parameters.get("service_type", "transactional")
+                        },
+                        {
+                            "id": "sample-topology-2",
+                            "name": "Development Sample Topology 2",
+                            "description": "Another sample topology for development purposes",
+                            "serviceType": parameters.get("service_type", "transactional")
+                        }
+                    ]
+                }
+            try:
+                return await get_skysql_topologies(parameters.get("service_type"))
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=404, detail=f"Tool {tool_name} not found")
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON in request body")
 
 @app.get("/resources")
 async def get_resources():
