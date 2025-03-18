@@ -1,46 +1,23 @@
-version: '1'
-
-# Application settings
-app:
-  name: mcp-server
-  type: mcp
-  
-# Deployment configuration
-deployment:
-  replicas: 1
-  resources:
-    cpu: 0.5
-    memory: 512Mi
-  
-# Runtime environment variables 
-env:
-  MCP_HOST: "0.0.0.0"
-  MCP_PORT: "8000"
-  MCP_DEBUG: "False"
-  # For sensitive values, use secrets
-  MCP_SECRET_KEY: "${SECRET_KEY}"
-  MCP_API_KEYS: "${API_KEYS}"
-  SKYSQL_API_KEY: "${SKYSQL_API_KEY}"
-
-# Network settings
-network:
-  port: 8000
-  health:
-    path: /health
-    initialDelaySeconds: 10
-    periodSeconds: 30
-
-# MCP Protocol Configuration
-mcp:
-  version: "1.0"
-  endpoints:
-    - path: /tools/list
-      method: GET
-    - path: /tools/call
-      method: POST
-    - path: /resources
-      method: GET
-    - path: /prompts
-      method: GET
-    - path: /health
-      method: GET 
+# Smithery.ai configuration
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    {}
+  commandFunction:
+    # A function that produces the CLI command to start the MCP on stdio.
+    |-
+    (config) => ({
+      "command": "python",
+      "args": [
+        "server.py"
+      ],
+      "env": {
+        "MCP_HOST": "0.0.0.0",
+        "MCP_PORT": "8000",
+        "MCP_DEBUG": "False",
+        "MCP_SECRET_KEY": "${SECRET_KEY}",
+        "MCP_API_KEYS": "${API_KEYS}",
+        "SKYSQL_API_KEY": "${SKYSQL_API_KEY}"
+      }
+    }) 
