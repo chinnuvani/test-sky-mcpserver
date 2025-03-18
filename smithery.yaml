@@ -3,7 +3,7 @@ version: '1'
 # Application settings
 app:
   name: mcp-server
-  type: mcp  # Changed from 'service' to 'mcp'
+  type: mcp
   
 # Deployment configuration
 deployment:
@@ -13,23 +13,20 @@ deployment:
     memory: 512Mi
   
 # Runtime environment variables 
-environment:
-  - name: MCP_HOST
-    value: 0.0.0.0
-  - name: MCP_PORT
-    value: 8000
-  - name: MCP_DEBUG
-    value: "False"
+env:
+  MCP_HOST: 0.0.0.0
+  MCP_PORT: 8000
+  MCP_DEBUG: "False"
   # For sensitive values, use secrets
-  - name: MCP_SECRET_KEY
+  MCP_SECRET_KEY:
     secretRef:
       name: mcp-secrets
       key: secret-key
-  - name: MCP_API_KEYS
+  MCP_API_KEYS:
     secretRef:
       name: mcp-secrets
       key: api-keys
-  - name: SKYSQL_API_KEY
+  SKYSQL_API_KEY:
     secretRef:
       name: mcp-secrets
       key: skysql-api-key
