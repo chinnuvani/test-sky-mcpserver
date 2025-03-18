@@ -1,0 +1,58 @@
+version: '1'
+
+# Application settings
+app:
+  name: mcp-server
+  type: mcp  # Changed from 'service' to 'mcp'
+  
+# Deployment configuration
+deployment:
+  replicas: 1
+  resources:
+    cpu: 0.5
+    memory: 512Mi
+  
+# Runtime environment variables 
+environment:
+  - name: MCP_HOST
+    value: 0.0.0.0
+  - name: MCP_PORT
+    value: 8000
+  - name: MCP_DEBUG
+    value: "False"
+  # For sensitive values, use secrets
+  - name: MCP_SECRET_KEY
+    secretRef:
+      name: mcp-secrets
+      key: secret-key
+  - name: MCP_API_KEYS
+    secretRef:
+      name: mcp-secrets
+      key: api-keys
+  - name: SKYSQL_API_KEY
+    secretRef:
+      name: mcp-secrets
+      key: skysql-api-key
+
+# Network settings
+network:
+  port: 8000
+  health:
+    path: /health
+    initialDelaySeconds: 10
+    periodSeconds: 30
+
+# MCP Protocol Configuration
+mcp:
+  version: "1.0"
+  endpoints:
+    - path: /tools/list
+      method: GET
+    - path: /tools/call
+      method: POST
+    - path: /resources
+      method: GET
+    - path: /prompts
+      method: GET
+    - path: /health
+      method: GET 
